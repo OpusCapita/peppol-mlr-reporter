@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: peppol-mlr-reporter
+  cloud:
+    consul:
+      host: consul
+      port: 8500
+      config:
+        enabled: true
+        prefix: ""
