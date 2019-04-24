@@ -83,12 +83,18 @@ public class MlrReportCreator {
                     issue_time = replace(issue_time, "issue_time", MlrUtils.convertTimeToXml(additionalMetadata.getIssueTime()));
                 } catch (Exception e) {
                     logger.debug("Failed to parse issue time: '" + additionalMetadata.getIssueTime() + "' for message: " + cm.getFileName());
+                    if (!cm.getHistory().hasError()) {
+                        cm.getHistory().addError("Unable to parse issue time: '" + additionalMetadata.getIssueTime() + "'");
+                    }
                 }
                 template = StringUtils.replace(template, "#ISSUE_TIME#", issue_time);
             }
         } catch (Exception e) {
             logger.info("Failed to parse issue issue date: '" + additionalMetadata.getIssueDate() + "', using current date instead");
             template = replace(template, "issue_date", MlrUtils.convertDateToXml(new Date()));
+            if (!cm.getHistory().hasError()) {
+                cm.getHistory().addError("Unable to parse issue date: '" + additionalMetadata.getIssueDate() + "'");
+            }
         }
 
         // if not replaced - remove placeholders
@@ -108,7 +114,6 @@ public class MlrReportCreator {
 
         return template;
     }
-
 
     private String createLines(ContainerMessage cm, String documentId) {
         List<DocumentLog> errors = cm.getHistory().getLogs().stream().filter(l -> !l.isInfo()).collect(Collectors.toList());
