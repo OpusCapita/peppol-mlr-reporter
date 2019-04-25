@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<StandardBusinessDocument xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader">
+	<StandardBusinessDocumentHeader>
+		<HeaderVersion>1.0</HeaderVersion>
+		<Sender>
+			<Identifier Authority="iso6523-actorid-upis">0007:987654321</Identifier>
+		</Sender>
+		<Receiver>
+			<Identifier Authority="iso6523-actorid-upis">0007:987654321</Identifier>
+		</Receiver>
+		<DocumentIdentification>
+			<Standard>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2</Standard>
+			<TypeVersion>2.1</TypeVersion>
+			<InstanceIdentifier>akjmgalp2019</InstanceIdentifier>
+			<Type>Invoice</Type>
+			<CreationDateAndTime>2016-06-03T04:32:31.532978+03:00</CreationDateAndTime>
+		</DocumentIdentification>
+		<BusinessScope>
+			<Scope>
+				<Type>DOCUMENTID</Type>
+				<InstanceIdentifier>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0::2.1</InstanceIdentifier>
+			</Scope>
+			<Scope>
+				<Type>PROCESSID</Type>
+				<InstanceIdentifier>urn:www.cenbii.eu:profile:bii05:ver2.0</InstanceIdentifier>
+			</Scope>
+		</BusinessScope>
+	</StandardBusinessDocumentHeader>
+	<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:cec="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:udt="urn:un:unece:uncefact:data:draft:UnqualifiedDataTypes:2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 UBL-Invoice-2.1.xsd ">
+		<cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+		<cbc:CustomizationID>urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0</cbc:CustomizationID>
+		<cbc:ProfileID>urn:www.cenbii.eu:profile:bii05:ver2.0</cbc:ProfileID>
+		<cbc:ID>9067031258</cbc:ID>
+		<cbc:IssueDate>2018-06-02</cbc:IssueDate>
+		<cbc:InvoiceTypeCode listAgencyID="6" listID="UNCL1001">380</cbc:InvoiceTypeCode>
+		<cbc:DocumentCurrencyCode listAgencyID="6" listID="ISO4217">NOK</cbc:DocumentCurrencyCode>
+		<cac:AdditionalDocumentReference xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+			<cbc:ID>TK org.kode 610000</cbc:ID>
+		</cac:AdditionalDocumentReference>
+		<cac:AdditionalDocumentReference xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+			<cbc:ID>1002081790</cbc:ID>
+		</cac:AdditionalDocumentReference>
+		<cac:AccountingSupplierParty>
+			<cac:Party>
+				<cbc:EndpointID schemeID="SE:ORGNR">987654321</cbc:EndpointID>
+				<cac:PartyName>
+					<cbc:Name>OpusCapita test</cbc:Name>
+				</cac:PartyName>
+				<cac:PostalAddress>
+					<cbc:StreetName>OpusCapita test street</cbc:StreetName>
+					<cbc:CityName>HELSINKI</cbc:CityName>
+					<cbc:PostalZone>00180</cbc:PostalZone>
+					<cac:Country>
+						<cbc:IdentificationCode listAgencyID="6" listID="ISO3166-1:Alpha2">FI</cbc:IdentificationCode>
+					</cac:Country>
+				</cac:PostalAddress>
+				<cac:PartyTaxScheme>
+					<cbc:CompanyID>NO996021858</cbc:CompanyID>
+					<cac:TaxScheme>
+						<cbc:ID>VAT</cbc:ID>
+					</cac:TaxScheme>
+				</cac:PartyTaxScheme>
+				<cac:PartyLegalEntity>
+					<cbc:RegistrationName>OpusCapita test</cbc:RegistrationName>
+					<cbc:CompanyID schemeID="FI:OVT">01098230</cbc:CompanyID>
+				</cac:PartyLegalEntity>
+			</cac:Party>
+		</cac:AccountingSupplierParty>
+		<cac:AccountingCustomerParty>
+			<cac:Party>
+				<cbc:EndpointID schemeID="SE:ORGNR">987654321</cbc:EndpointID>
+				<cac:PartyIdentification>
+					<cbc:ID schemeID="ZZZ">0000141330</cbc:ID>
+				</cac:PartyIdentification>
+				<cac:PartyName>
+					<cbc:Name>OpusCapita test</cbc:Name>
+				</cac:PartyName>
+				<cac:PostalAddress>
+					<cbc:StreetName>OpusCapita test street</cbc:StreetName>
+					<cbc:CityName>TRONDHEIM</cbc:CityName>
+					<cbc:PostalZone>7004</cbc:PostalZone>
+					<cac:Country>
+						<cbc:IdentificationCode listAgencyID="6" listID="ISO3166-1:Alpha2">NO</cbc:IdentificationCode>
+					</cac:Country>
+				</cac:PostalAddress>
+				<cac:PartyTaxScheme>
+					<cbc:CompanyID schemeID="NO:VAT" schemeAgencyID="82">testMVA</cbc:CompanyID>
+					<cac:TaxScheme>
+						<cbc:ID>VAT</cbc:ID>
+					</cac:TaxScheme>
+				</cac:PartyTaxScheme>
+				<cac:PartyLegalEntity>
+					<cbc:RegistrationName>OpusCapita test</cbc:RegistrationName>
+					<cbc:CompanyID schemeID="NO:ORGNR">test</cbc:CompanyID>
+				</cac:PartyLegalEntity>
+				<cac:Contact>
+					<cbc:ID>N/A</cbc:ID>
+				</cac:Contact>
+			</cac:Party>
+		</cac:AccountingCustomerParty>
+		<cac:Delivery>
+			<cbc:ActualDeliveryDate>2016-06-02</cbc:ActualDeliveryDate>
+			<cac:DeliveryLocation>
+				<cac:Address>
+					<cbc:StreetName>OpusCapita test street</cbc:StreetName>
+					<cbc:CityName>TRONDHEIM</cbc:CityName>
+					<cbc:PostalZone>7041</cbc:PostalZone>
+					<cac:Country>
+						<cbc:IdentificationCode listAgencyID="6" listID="ISO3166-1:Alpha2">NO</cbc:IdentificationCode>
+					</cac:Country>
+				</cac:Address>
+			</cac:DeliveryLocation>
+		</cac:Delivery>
+		<cac:PaymentMeans xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+			<cbc:PaymentMeansCode listID="UNCL4461">31</cbc:PaymentMeansCode>
+			<cbc:PaymentDueDate>2018-11-11</cbc:PaymentDueDate>
+			<cbc:PaymentChannelCode>IBAN</cbc:PaymentChannelCode>
+			<cac:PayeeFinancialAccount>
+				<cbc:ID schemeID="IBAN">97500641995</cbc:ID>
+				<cac:FinancialInstitutionBranch>
+					<cac:FinancialInstitution>
+						<cbc:ID schemeID="BIC">ESSENOKXXXX</cbc:ID>
+					</cac:FinancialInstitution>
+				</cac:FinancialInstitutionBranch>
+			</cac:PayeeFinancialAccount>
+		</cac:PaymentMeans>
+		<cac:PaymentTerms>
+			<cbc:Note>30 dager netto</cbc:Note>
+		</cac:PaymentTerms>
+		<cac:TaxTotal>
+			<cbc:TaxAmount currencyID="NOK">12085.82</cbc:TaxAmount>
+			<cac:TaxSubtotal xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+				<cbc:TaxableAmount currencyID="NOK">48343.26</cbc:TaxableAmount>
+				<cbc:TaxAmount currencyID="NOK">12085.82</cbc:TaxAmount>
+				<cac:TaxCategory>
+					<cbc:ID schemeID="UNCL5305">S</cbc:ID>
+					<cbc:Percent>25.000</cbc:Percent>
+					<cac:TaxScheme>
+						<cbc:ID>VAT</cbc:ID>
+					</cac:TaxScheme>
+				</cac:TaxCategory>
+			</cac:TaxSubtotal>
+		</cac:TaxTotal>
+		<cac:LegalMonetaryTotal>
+			<cbc:LineExtensionAmount currencyID="NOK">48343.26</cbc:LineExtensionAmount>
+			<cbc:TaxExclusiveAmount currencyID="NOK">48343.26</cbc:TaxExclusiveAmount>
+			<cbc:TaxInclusiveAmount currencyID="NOK">60429.08</cbc:TaxInclusiveAmount>
+			<cbc:PayableAmount currencyID="NOK">60429.08</cbc:PayableAmount>
+		</cac:LegalMonetaryTotal>
+		<cac:InvoiceLine xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+			<cbc:ID>1</cbc:ID>
+			<cbc:InvoicedQuantity unitCodeListID="UNECERec20" unitCode="TNE">33.180</cbc:InvoicedQuantity>
+			<cbc:LineExtensionAmount currencyID="NOK">48343.26</cbc:LineExtensionAmount>
+			<cac:Item>
+				<cbc:Name>OpusCapita test</cbc:Name>
+				<cac:ClassifiedTaxCategory>
+					<cbc:ID schemeID="UNCL5305">S</cbc:ID>
+					<cbc:Percent>25.000</cbc:Percent>
+					<cac:TaxScheme>
+						<cbc:ID>VAT</cbc:ID>
+					</cac:TaxScheme>
+				</cac:ClassifiedTaxCategory>
+			</cac:Item>
+			<cac:Price>
+				<cbc:PriceAmount currencyID="NOK">1457.00</cbc:PriceAmount>
+				<cbc:BaseQuantity unitCodeListID="UNECERec20" unitCode="TNE">1</cbc:BaseQuantity>
+			</cac:Price>
+		</cac:InvoiceLine>
+	</Invoice>
+</StandardBusinessDocument>

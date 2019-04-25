@@ -4,6 +4,7 @@ import no.difi.oxalis.api.lang.OxalisContentException;
 import no.difi.oxalis.sniffer.document.HardCodedNamespaceResolver;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -39,12 +40,13 @@ public class AdditionalMetadataExtractor {
 
             XPath xPath = XPathFactory.newInstance().newXPath();
             xPath.setNamespaceContext(new HardCodedNamespaceResolver());
+            String type = localName(document);
 
             String id = retriveValueForXpath(document, xPath, "//cbc:ID");
             String date = retriveValueForXpath(document, xPath, "//cbc:IssueDate");
             String time = retriveValueForXpath(document, xPath, "//cbc:IssueTime");
-            String sender = getSenderName(document, xPath);
-            String receiver = getReceiverName(document, xPath);
+            String sender = getSenderName(document, xPath, type);
+            String receiver = getReceiverName(document, xPath, type);
 
             return new MlrAdditionalMetadata(id, date, time, sender, receiver);
         } catch (Exception e) {
@@ -52,10 +54,24 @@ public class AdditionalMetadataExtractor {
         }
     }
 
-    private String getSenderName(Document document, XPath xPath) {
+    private String localName(Document document) {
+        String result = document.getDocumentElement().getLocalName();
+
+        if ("StandardBusinessDocument".equals(result)) {
+            NodeList children = document.getDocumentElement().getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                result = children.item(i).getLocalName();
+                if (result != null && !"StandardBusinessDocumentHeader".equals(result)) {
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    private String getSenderName(Document document, XPath xPath, String type) {
         List<String> paths = new ArrayList<>();
 
-        String type = document.getDocumentElement().getLocalName();
         if ("DespatchAdvice".equalsIgnoreCase(type)) {
             paths.add("//cac:DespatchSupplierParty/cac:Party/cac:PartyName/cbc:Name");
         }
@@ -80,10 +96,9 @@ public class AdditionalMetadataExtractor {
         return checkPaths(document, xPath, paths);
     }
 
-    private String getReceiverName(Document document, XPath xPath) {
+    private String getReceiverName(Document document, XPath xPath, String type) {
         List<String> paths = new ArrayList<>();
 
-        String type = document.getDocumentElement().getLocalName();
         if ("DespatchAdvice".equalsIgnoreCase(type)) {
             paths.add("//cac:DeliveryCustomerParty/cac:Party/cac:PartyName/cbc:Name");
         }
