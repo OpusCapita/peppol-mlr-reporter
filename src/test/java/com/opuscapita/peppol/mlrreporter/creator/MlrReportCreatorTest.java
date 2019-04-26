@@ -46,28 +46,28 @@ public class MlrReportCreatorTest {
         assertTrue(result.contains("<cbc:ID>" + more.getDocumentId() + "-MLR</cbc:ID>"));
         assertTrue(result.contains(
                 "<cac:SenderParty>" +
-                        "<cbc:EndpointID>" + metadata.getSenderId() + "</cbc:EndpointID>" +
-                        "<cac:PartyName>" +
-                            "<cbc:Name>" + more.getSenderName() + "</cbc:Name>" +
-                        "</cac:PartyName>" +
+                    "<cbc:EndpointID>" + metadata.getSenderId() + "</cbc:EndpointID>" +
+                    "<cac:PartyName>" +
+                        "<cbc:Name>" + more.getSenderName() + "</cbc:Name>" +
+                    "</cac:PartyName>" +
                 "</cac:SenderParty>"
         ));
         assertTrue(result.contains(
                 "<cac:ReceiverParty>" +
-                        "<cbc:EndpointID>" + metadata.getRecipientId() + "</cbc:EndpointID>" +
-                        "<cac:PartyName>" +
-                            "<cbc:Name>" + more.getReceiverName() + "</cbc:Name>" +
-                        "</cac:PartyName>" +
+                    "<cbc:EndpointID>" + metadata.getRecipientId() + "</cbc:EndpointID>" +
+                    "<cac:PartyName>" +
+                        "<cbc:Name>" + more.getReceiverName() + "</cbc:Name>" +
+                    "</cac:PartyName>" +
                 "</cac:ReceiverParty>"
         ));
         assertTrue(result.contains(
                 "<cac:DocumentResponse>" +
-                        "<cac:Response>" +
-                            "<cbc:ResponseCode>" + type.name() + "</cbc:ResponseCode>" +
-                        "</cac:Response>" +
-                        "<cac:DocumentReference>" +
-                            "<cbc:ID>" + metadata.getMessageId() + "</cbc:ID>" +
-                        "</cac:DocumentReference>" +
+                    "<cac:Response>" +
+                        "<cbc:ResponseCode>" + type.name() + "</cbc:ResponseCode>" +
+                    "</cac:Response>" +
+                    "<cac:DocumentReference>" +
+                        "<cbc:ID>" + metadata.getMessageId() + "</cbc:ID>" +
+                    "</cac:DocumentReference>" +
                 "</cac:DocumentResponse>"
         ));
         assertFalse(result.contains("#"));

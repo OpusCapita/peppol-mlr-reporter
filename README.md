@@ -7,6 +7,4 @@ The service reads files from the `peppol.mlr-reporter.queue.in.name` queue and p
 * Creating MLR structure
 * Sending MLR file to related business platform
 
-Please check the wiki pages for more information:
-* [Preprocessing](https://opuscapita.atlassian.net/wiki/spaces/IIPEP/pages/107806873/New+Peppol+solution+modules+description#NewPeppolsolutionmodulesdescription-preprocessing)
-* [Internal Routing](https://opuscapita.atlassian.net/wiki/spaces/IIPEP/pages/107806873/New+Peppol+solution+modules+description#NewPeppolsolutionmodulesdescription-internal-routing)
+Please check the wiki pages for more information.

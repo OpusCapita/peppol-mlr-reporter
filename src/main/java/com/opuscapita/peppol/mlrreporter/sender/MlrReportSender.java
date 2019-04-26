@@ -46,9 +46,9 @@ public class MlrReportSender {
         sendReport(report, fileName, cm.getSource());
     }
 
-    private void storeReport(String report, String pathName, String fileName) throws IOException, TransformerException {
+    private void storeReport(String report, String pathName, String fileName) throws IOException {
         logger.debug("Storing MLR as " + fileName);
-        storage.putToCustom(IOUtils.toInputStream(prettyPrint(report), StandardCharsets.UTF_8), pathName, fileName);
+        storage.putToCustom(IOUtils.toInputStream(report, StandardCharsets.UTF_8), pathName, fileName);
         logger.info("MLR successfully stored as " + pathName + fileName);
     }
 
