@@ -52,7 +52,8 @@ public class XibSender {
         return UriComponentsBuilder
                 .fromUriString("http://peppol-xib-adaptor")
                 .port(3043)
-                .path("/api/upload-mlr/" + filename)
+                .path("/api/upload-mlr")
+                .queryParam("name", filename)
                 .toUriString();
     }
 }

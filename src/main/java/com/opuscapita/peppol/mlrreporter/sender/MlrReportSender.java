@@ -57,6 +57,9 @@ public class MlrReportSender {
         if (Source.XIB.equals(source)) {
             xibSender.send(report, fileName);
         }
+        if (Source.A2A.equals(source)) {
+            // don't send OTHER_ERROR to a2a
+        }
     }
 
     private String prettyPrint(String report) throws TransformerException {
