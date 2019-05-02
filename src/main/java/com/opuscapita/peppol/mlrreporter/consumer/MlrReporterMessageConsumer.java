@@ -2,6 +2,7 @@ package com.opuscapita.peppol.mlrreporter.consumer;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.container.state.ProcessStep;
+import com.opuscapita.peppol.commons.eventing.TicketReporter;
 import com.opuscapita.peppol.commons.queue.consume.ContainerMessageConsumer;
 import com.opuscapita.peppol.mlrreporter.creator.MlrReportCreator;
 import com.opuscapita.peppol.mlrreporter.creator.MlrType;
@@ -20,34 +21,43 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
 
     private MlrReportSender mlrSender;
     private MlrReportCreator mlrCreator;
+    private TicketReporter ticketReporter;
 
     @Autowired
-    public MlrReporterMessageConsumer(MlrReportCreator mlrCreator, MlrReportSender mlrSender) {
+    public MlrReporterMessageConsumer(MlrReportCreator mlrCreator, MlrReportSender mlrSender, TicketReporter ticketReporter) {
         this.mlrSender = mlrSender;
         this.mlrCreator = mlrCreator;
+        this.ticketReporter = ticketReporter;
     }
 
     @Override
-    public void consume(@NotNull ContainerMessage cm) throws Exception {
-        logger.info("MLR reporter received the message: " + cm.toKibana());
+    public void consume(@NotNull ContainerMessage cm) {
+        try {
+            logger.info("MLR reporter received the message: " + cm.toKibana());
 
-        if (StringUtils.isBlank(cm.getFileName())) {
-            throw new IllegalArgumentException("File name is empty in received message: " + cm.toKibana());
+            if (StringUtils.isBlank(cm.getFileName())) {
+                throw new IllegalArgumentException("File name is empty in received message: " + cm.toKibana());
+            }
+
+            if (cm.isInbound()) {
+                logger.debug("Skipping MLR creation for inbound file: " + cm.getFileName());
+                return;
+            }
+
+            MlrType type = getMlrType(cm);
+            if (type == null) {
+                logger.debug("Couldn't find a reason to create MLR for file: " + cm.getFileName());
+                return;
+            }
+
+            String report = mlrCreator.create(cm, type);
+            mlrSender.send(cm, report, type);
+
+        } catch (Exception e) {
+            String message = "Error occurred while creating MLR report for file: " + cm.getFileName();
+            ticketReporter.reportWithContainerMessage(cm, e, message);
+            logger.error(message, e);
         }
-
-        if (cm.isInbound()) {
-            logger.debug("Skipping MLR creation for inbound file: " + cm.getFileName());
-            return;
-        }
-
-        MlrType type = getMlrType(cm);
-        if (type == null) {
-            logger.debug("Couldn't find a reason to create MLR for file: " + cm.getFileName());
-            return;
-        }
-
-        String report = mlrCreator.create(cm, type);
-        mlrSender.send(cm, report, type);
     }
 
     private MlrType getMlrType(ContainerMessage cm) {
