@@ -5,7 +5,10 @@ import com.opuscapita.peppol.mlrreporter.util.FileMessageResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -40,8 +43,8 @@ public class XibSender {
         logger.debug("Wrapped and set the request body as input stream");
 
         try {
-            ResponseEntity<String> result = restTemplate.exchange(endpoint, HttpMethod.POST, entity, String.class);
-            logger.debug("Upload-mlr request successfully sent, got response: " + result.toString());
+            restTemplate.exchange(endpoint, HttpMethod.POST, entity, String.class);
+            logger.info("MLR successfully sent to XIB, filename: " + fileName);
         } catch (Exception e) {
             throw new IOException("Error occurred while trying to send the MLR to XIB", e);
         }

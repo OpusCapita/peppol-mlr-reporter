@@ -33,8 +33,6 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
     @Override
     public void consume(@NotNull ContainerMessage cm) {
         try {
-            logger.info("MLR reporter received the message: " + cm.toKibana());
-
             if (StringUtils.isBlank(cm.getFileName())) {
                 throw new IllegalArgumentException("File name is empty in received message: " + cm.toKibana());
             }
