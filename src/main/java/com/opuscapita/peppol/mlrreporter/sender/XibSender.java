@@ -28,13 +28,14 @@ public class XibSender {
     }
 
     void send(String report, String fileName) throws IOException {
-        String endpoint = getEndpoint(fileName);
+        String endpoint = getEndpoint();
         logger.debug("Sending upload-mlr request to endpoint: " + endpoint + " for file: " + fileName);
 
         HttpHeaders headers = new HttpHeaders();
         authService.setAuthorizationHeader(headers);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file_name", fileName);
         body.add("file", new ByteArrayResource(report.getBytes()));
         HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
         logger.debug("Wrapped and set the request body as input stream");
@@ -47,12 +48,11 @@ public class XibSender {
         }
     }
 
-    private String getEndpoint(String filename) {
+    private String getEndpoint() {
         return UriComponentsBuilder
                 .fromUriString("http://peppol-xib-adaptor")
                 .port(3043)
                 .path("/api/upload-mlr")
-                .queryParam("name", filename)
                 .toUriString();
     }
 }
