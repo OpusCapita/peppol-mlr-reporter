@@ -1,10 +1,10 @@
 package com.opuscapita.peppol.mlrreporter.sender;
 
 import com.opuscapita.peppol.commons.auth.AuthorizationService;
+import com.opuscapita.peppol.mlrreporter.util.FileMessageResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -35,8 +35,7 @@ public class XibSender {
         authService.setAuthorizationHeader(headers);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file_name", fileName);
-        body.add("file", new ByteArrayResource(report.getBytes()));
+        body.add("file", new FileMessageResource(report.getBytes(), fileName));
         HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
         logger.debug("Wrapped and set the request body as input stream");
 
