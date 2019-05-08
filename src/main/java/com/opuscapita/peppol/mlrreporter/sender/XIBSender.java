@@ -18,14 +18,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 
 @Component
-public class XibSender {
+public class XIBSender {
 
-    private static final Logger logger = LoggerFactory.getLogger(XibSender.class);
+    private static final Logger logger = LoggerFactory.getLogger(XIBSender.class);
 
     private final RestTemplate restTemplate;
     private final AuthorizationService authService;
 
-    public XibSender(AuthorizationService authService, RestTemplateBuilder restTemplateBuilder) {
+    public XIBSender(AuthorizationService authService, RestTemplateBuilder restTemplateBuilder) {
         this.authService = authService;
         this.restTemplate = restTemplateBuilder.build();
     }

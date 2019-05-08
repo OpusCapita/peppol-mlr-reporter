@@ -28,11 +28,13 @@ public class MlrReportSender {
     private static final Logger logger = LoggerFactory.getLogger(MlrReportSender.class);
 
     private final Storage storage;
-    private final XibSender xibSender;
+    private final A2ASender a2ASender;
+    private final XIBSender xibSender;
 
     @Autowired
-    public MlrReportSender(Storage storage, XibSender xibSender) {
+    public MlrReportSender(Storage storage, A2ASender a2ASender, XIBSender xibSender) {
         this.storage = storage;
+        this.a2ASender = a2ASender;
         this.xibSender = xibSender;
     }
 
@@ -58,7 +60,7 @@ public class MlrReportSender {
             xibSender.send(report, fileName);
         }
         if (Source.A2A.equals(source)) {
-            // don't send OTHER_ERROR to a2a
+            a2ASender.send(report, fileName);
         }
     }
 
