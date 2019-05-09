@@ -168,7 +168,7 @@ public class MlrReporterMessageConsumerTest {
 
     private String storeFile(File file) throws Exception {
         try (InputStream stream = new FileInputStream(file)) {
-            return storage.putToCustom(stream, "/private/peppol/test/", file.getName());
+            return storage.put(stream, "/private/peppol/test/", file.getName());
         }
     }
 
