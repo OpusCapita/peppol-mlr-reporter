@@ -2,19 +2,10 @@
   "default": {
     "name": "${serviceName}",
     "log-driver": "gelf",
-    "log-opt": [
-      "gelf-address=udp://${logstash_ip}:12201",
-      "tag=\"${serviceName}\""
-    ],
-    "constraint": [
-      "engine.labels.nodetype==worker"
-    ],
-    "publish": [
-      "mode=host,target=3042,published=3042,protocol=tcp"
-    ],
-    "host": [
-      "consul:172.17.0.1"
-    ],
+    "log-opt": ["gelf-address=udp://${logstash_ip}:12201", "tag=\"${serviceName}\""],
+    "constraint": ["engine.labels.nodetype==worker"],
+    "publish": ["mode=host,target=3042,published=3042,protocol=tcp"],
+    "host": ["consul:172.17.0.1"],
     "env": [
       "SERVICE_NAME=${serviceName}",
       "SERVICE_3042_CHECK_HTTP=/api/health/check",
@@ -29,7 +20,15 @@
       "mq/password": "${SECRET_:env_RABBITMQPASS}",
       "a2a/host": "${SECRET_:env_A2AHOST}",
       "a2a/username": "${SECRET_:env_A2AUSERNAME}",
-      "a2a/password": "${SECRET_:env_A2APASSWORD}"
+      "a2a/password": "${SECRET_:env_A2APASSWORD}",
+      "snc/enabled": "true",
+      "snc/rest/url": "${PEPPOL_:env_SNCURL}",
+      "snc/rest/scope": "${PEPPOL_:env_SNCSCOPE}",
+      "snc/rest/username": "${PEPPOL_:env_SNCUSER}",
+      "snc/rest/password": "${PEPPOL_:env_SNCPASS}",
+      "snc/bsc": "peppol-AP",
+      "snc/from": "peppol-AP@",
+      "snc/businessGroup": "Itella Information"
     },
     "limit-cpu": "0.2",
     "limit-memory": "900M",
