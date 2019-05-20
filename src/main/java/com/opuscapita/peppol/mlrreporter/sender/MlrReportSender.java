@@ -28,11 +28,13 @@ public class MlrReportSender {
     private static final Logger logger = LoggerFactory.getLogger(MlrReportSender.class);
 
     private final Storage storage;
-    private final XibSender xibSender;
+    private final A2ASender a2ASender;
+    private final XIBSender xibSender;
 
     @Autowired
-    public MlrReportSender(Storage storage, XibSender xibSender) {
+    public MlrReportSender(Storage storage, A2ASender a2ASender, XIBSender xibSender) {
         this.storage = storage;
+        this.a2ASender = a2ASender;
         this.xibSender = xibSender;
     }
 
@@ -48,7 +50,7 @@ public class MlrReportSender {
 
     private void storeReport(String report, String pathName, String fileName) throws IOException {
         logger.debug("Storing MLR as " + fileName);
-        storage.putToCustom(IOUtils.toInputStream(report, StandardCharsets.UTF_8), pathName, fileName);
+        storage.put(IOUtils.toInputStream(report, StandardCharsets.UTF_8), pathName, fileName);
         logger.info("MLR successfully stored as " + pathName + fileName);
     }
 
@@ -56,6 +58,9 @@ public class MlrReportSender {
     private void sendReport(String report, String fileName, Source source) throws IOException {
         if (Source.XIB.equals(source)) {
             xibSender.send(report, fileName);
+        }
+        if (Source.A2A.equals(source)) {
+            a2ASender.send(report, fileName);
         }
     }
 
