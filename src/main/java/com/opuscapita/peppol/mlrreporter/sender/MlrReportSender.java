@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.xml.transform.OutputKeys;
@@ -26,6 +27,9 @@ import java.nio.charset.StandardCharsets;
 public class MlrReportSender {
 
     private static final Logger logger = LoggerFactory.getLogger(MlrReportSender.class);
+
+    @Value("${fake-sending:}")
+    private String fakeConfig;
 
     private final Storage storage;
     private final A2ASender a2ASender;
@@ -56,10 +60,10 @@ public class MlrReportSender {
 
     // should send the report to specified business platform
     private void sendReport(String report, String fileName, Source source) throws IOException {
-        if (Source.XIB.equals(source)) {
+        if (Source.XIB.equals(source) && !fakeConfig.contains("xib")) {
             xibSender.send(report, fileName);
         }
-        if (Source.A2A.equals(source)) {
+        if (Source.A2A.equals(source) && !fakeConfig.contains("a2a")) {
             a2ASender.send(report, fileName);
         }
     }
