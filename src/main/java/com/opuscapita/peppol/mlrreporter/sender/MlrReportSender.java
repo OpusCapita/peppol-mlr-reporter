@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.xml.transform.OutputKeys;
@@ -24,6 +25,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
 @Component
+@RefreshScope
 public class MlrReportSender {
 
     private static final Logger logger = LoggerFactory.getLogger(MlrReportSender.class);
