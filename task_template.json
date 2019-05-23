@@ -28,7 +28,10 @@
       "snc/rest/password": "${PEPPOL_:env_SNCPASS}",
       "snc/bsc": "peppol-AP",
       "snc/from": "peppol-AP@",
-      "snc/businessGroup": "Itella Information"
+      "snc/businessGroup": "Itella Information",
+      "email/from": "noreply@opuscapita.com",
+      "email/replyTo": "customerservice.en@opuscapita.com",
+      "email/subject": "Peppol Gateway: Invalid document report"
     },
     "limit-cpu": "0.2",
     "limit-memory": "900M",
