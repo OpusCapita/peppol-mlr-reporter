@@ -10,13 +10,13 @@ import java.util.UUID;
 @RefreshScope
 public class EmailConfig {
 
-    @Value("${email.from}")
+    @Value("${email.from:'noreply@opuscapita.com'}")
     private String from;
 
-    @Value("${email.replyTo}")
+    @Value("${email.replyTo:'customerservice.en@opuscapita.com'}")
     private String replyTo;
 
-    @Value("${email.subject}")
+    @Value("${email.subject:'Peppol Gateway: Invalid document report'}")
     private String subject;
 
     public String getFrom() {
