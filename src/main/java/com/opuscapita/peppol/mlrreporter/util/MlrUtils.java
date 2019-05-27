@@ -17,7 +17,7 @@ public class MlrUtils {
         String base = FilenameUtils.getBaseName(filename);
         String[] parts = base.split("_");
         String last = parts[parts.length - 1];
-        if (parts.length > 1 && StringUtils.isNumeric(last)) {
+        if (parts.length > 1 && StringUtils.isNumeric(last) && last.length() < 3) {
             return base.substring(0, base.length() - (last.length() + 1));
         }
         return base;
