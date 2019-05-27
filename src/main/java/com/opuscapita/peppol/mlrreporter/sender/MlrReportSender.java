@@ -51,7 +51,7 @@ public class MlrReportSender {
 
         storeReport(report, pathName, fileName);
 
-        sendReport(report, fileName, cm.getSource());
+        tryToSendReport(report, fileName, cm.getSource());
     }
 
     private void storeReport(String report, String pathName, String fileName) throws IOException {
@@ -60,7 +60,25 @@ public class MlrReportSender {
         logger.info("MLR successfully stored as " + pathName + fileName);
     }
 
-    // should send the report to specified business platform
+    // ugly retry logic again...
+    private void tryToSendReport(String report, String fileName, Source source) throws IOException {
+        int i = 0;
+        IOException t;
+        do {
+            try {
+                sendReport(report, fileName, source);
+                return;
+            } catch (IOException e) {
+                t = e;
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException ignored) {
+                }
+            }
+        } while (++i < 5);
+        throw t;
+    }
+
     private void sendReport(String report, String fileName, Source source) throws IOException {
         if (Source.XIB.equals(source) && !fakeConfig.contains("xib")) {
             xibSender.send(report, fileName);
