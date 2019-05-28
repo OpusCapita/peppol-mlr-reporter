@@ -67,7 +67,7 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
         }
 
         logger.debug("Checking sending errors of the message: " + cm.getFileName());
-        if (cm.getHistory().getLogs().stream().anyMatch(DocumentLog::isSendingError)) {
+        if (hasLookupError(cm)) {
             logger.info("Creating 'ER' MLR for the message: " + cm.toKibana() + " reason: Sending Errors");
             return MlrType.ER;
         }
@@ -91,6 +91,13 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
             return MlrType.AP;
         }
         return null;
+    }
+
+    private boolean hasLookupError(ContainerMessage cm) {
+        return cm.getHistory().getLogs().stream().filter(DocumentLog::isSendingError).anyMatch(log -> {
+            String code = log.getMessage().split(":")[0];
+            return "UNKNOWN_RECIPIENT".equals(code) || "UNSUPPORTED_DATA_FORMAT".equals(code);
+        });
     }
 
 }
