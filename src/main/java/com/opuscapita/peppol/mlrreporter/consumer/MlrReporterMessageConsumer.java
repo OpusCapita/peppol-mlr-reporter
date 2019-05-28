@@ -2,6 +2,7 @@ package com.opuscapita.peppol.mlrreporter.consumer;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.container.state.ProcessStep;
+import com.opuscapita.peppol.commons.container.state.log.DocumentLog;
 import com.opuscapita.peppol.commons.eventing.TicketReporter;
 import com.opuscapita.peppol.commons.queue.consume.ContainerMessageConsumer;
 import com.opuscapita.peppol.mlrreporter.creator.MlrReportCreator;
@@ -65,10 +66,17 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
             return MlrType.RE;
         }
 
+        logger.debug("Checking sending errors of the message: " + cm.getFileName());
+        if (cm.getHistory().getLogs().stream().anyMatch(DocumentLog::isSendingError)) {
+            logger.info("Creating 'ER' MLR for the message: " + cm.toKibana() + " reason: Sending Errors");
+            return MlrType.ER;
+        }
+
         logger.debug("Checking any other errors of the message: " + cm.getFileName());
         if (cm.getHistory().hasError()) {
-            logger.info("Creating 'ER' MLR for the message: " + cm.toKibana() + " reason: Processing or Sending Errors");
-            return MlrType.ER;
+            logger.info("Creating 'ER' MLR for the message: " + cm.toKibana() + " reason: Processing Errors");
+            return null; // disabling for now
+            //return MlrType.ER;
         }
 
         logger.debug("Checking for outbound retries of the message: " + cm.getFileName());
