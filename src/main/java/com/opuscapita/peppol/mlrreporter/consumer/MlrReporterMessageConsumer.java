@@ -74,7 +74,7 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
 
         logger.debug("Checking any other errors of the message: " + cm.getFileName());
         if (cm.getHistory().hasError()) {
-            logger.info("Creating 'ER' MLR for the message: " + cm.toKibana() + " reason: Processing Errors");
+//            logger.info("Creating 'ER' MLR for the message: " + cm.toKibana() + " reason: Processing Errors");
             return null; // disabling for now
             //return MlrType.ER;
         }
