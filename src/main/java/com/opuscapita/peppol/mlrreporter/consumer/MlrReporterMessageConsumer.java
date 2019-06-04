@@ -1,12 +1,11 @@
 package com.opuscapita.peppol.mlrreporter.consumer;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
-import com.opuscapita.peppol.commons.container.state.ProcessStep;
-import com.opuscapita.peppol.commons.container.state.log.DocumentLog;
 import com.opuscapita.peppol.commons.eventing.TicketReporter;
 import com.opuscapita.peppol.commons.queue.consume.ContainerMessageConsumer;
 import com.opuscapita.peppol.mlrreporter.creator.MlrReportCreator;
 import com.opuscapita.peppol.mlrreporter.creator.MlrType;
+import com.opuscapita.peppol.mlrreporter.creator.MlrTypeIdentifier;
 import com.opuscapita.peppol.mlrreporter.sender.MlrReportSender;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -23,12 +22,15 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
     private MlrReportSender mlrSender;
     private MlrReportCreator mlrCreator;
     private TicketReporter ticketReporter;
+    private MlrTypeIdentifier typeIdentifier;
 
     @Autowired
-    public MlrReporterMessageConsumer(MlrReportCreator mlrCreator, MlrReportSender mlrSender, TicketReporter ticketReporter) {
+    public MlrReporterMessageConsumer(MlrReportCreator mlrCreator, MlrReportSender mlrSender,
+                                      TicketReporter ticketReporter, MlrTypeIdentifier typeIdentifier) {
         this.mlrSender = mlrSender;
         this.mlrCreator = mlrCreator;
         this.ticketReporter = ticketReporter;
+        this.typeIdentifier = typeIdentifier;
     }
 
     @Override
@@ -38,12 +40,7 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
                 throw new IllegalArgumentException("File name is empty in received message: " + cm.toKibana());
             }
 
-            if (cm.isInbound()) {
-                logger.debug("Skipping MLR creation for inbound file: " + cm.getFileName());
-                return;
-            }
-
-            MlrType type = getMlrType(cm);
+            MlrType type = typeIdentifier.identify(cm);
             if (type == null) {
                 logger.debug("Couldn't find a reason to create MLR for file: " + cm.getFileName());
                 return;
@@ -57,47 +54,6 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
             ticketReporter.reportWithContainerMessage(cm, e, message);
             logger.error(message, e);
         }
-    }
-
-    private MlrType getMlrType(ContainerMessage cm) {
-        logger.debug("Checking validation errors of the message: " + cm.getFileName());
-        if (!cm.getHistory().getValidationErrors().isEmpty()) {
-            logger.info("Creating 'RE' MLR for the message: " + cm.toKibana() + " reason: Validation Errors");
-            return MlrType.RE;
-        }
-
-        logger.debug("Checking sending errors of the message: " + cm.getFileName());
-        if (hasLookupError(cm)) {
-            logger.info("Creating 'ER' MLR for the message: " + cm.toKibana() + " reason: Sending Errors");
-            return MlrType.ER;
-        }
-
-        logger.debug("Checking any other errors of the message: " + cm.getFileName());
-        if (cm.getHistory().hasError()) {
-//            logger.info("Creating 'ER' MLR for the message: " + cm.toKibana() + " reason: Processing Errors");
-            return null; // disabling for now
-            //return MlrType.ER;
-        }
-
-        logger.debug("Checking for outbound retries of the message: " + cm.getFileName());
-        if (ProcessStep.OUTBOUND.equals(cm.getStep())) {
-            logger.info("Creating 'AB' MLR for the message: " + cm.toKibana() + " reason: Outbound Retry");
-            return MlrType.AB;
-        }
-
-        logger.debug("Checking for successfully delivery of the message: " + cm.getFileName());
-        if (ProcessStep.NETWORK.equals(cm.getStep())) {
-            logger.info("Creating 'AP' MLR for the message: " + cm.toKibana() + " reason: Successful Delivery");
-            return MlrType.AP;
-        }
-        return null;
-    }
-
-    private boolean hasLookupError(ContainerMessage cm) {
-        return cm.getHistory().getLogs().stream().filter(DocumentLog::isSendingError).anyMatch(log -> {
-            String code = log.getMessage().split(":")[0];
-            return "UNKNOWN_RECIPIENT".equals(code) || "UNSUPPORTED_DATA_FORMAT".equals(code);
-        });
     }
 
 }

@@ -4,6 +4,9 @@ import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.container.state.Source;
 import com.opuscapita.peppol.commons.storage.Storage;
 import com.opuscapita.peppol.mlrreporter.creator.MlrType;
+import com.opuscapita.peppol.mlrreporter.email.AccessPointManager;
+import com.opuscapita.peppol.mlrreporter.email.EmailSender;
+import com.opuscapita.peppol.mlrreporter.email.dto.AccessPoint;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -15,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -36,22 +38,27 @@ public class MlrReportSender {
     private final Storage storage;
     private final A2ASender a2ASender;
     private final XIBSender xibSender;
+    private final EmailSender emailSender;
+    private final AccessPointManager apManager;
 
     @Autowired
-    public MlrReportSender(Storage storage, A2ASender a2ASender, XIBSender xibSender) {
+    public MlrReportSender(Storage storage, A2ASender a2ASender, XIBSender xibSender,
+                           EmailSender emailSender, AccessPointManager apManager) {
         this.storage = storage;
         this.a2ASender = a2ASender;
         this.xibSender = xibSender;
+        this.emailSender = emailSender;
+        this.apManager = apManager;
     }
 
-    public void send(ContainerMessage cm, String report, MlrType type) throws IOException, TransformerException {
+    public void send(ContainerMessage cm, String report, MlrType type) throws IOException {
         String pathName = FilenameUtils.getFullPath(cm.getFileName());
         String baseName = FilenameUtils.getBaseName(cm.getFileName());
         String fileName = baseName + "-" + type.name().toLowerCase() + "-mlr.xml";
 
         storeReport(report, pathName, fileName);
 
-        tryToSendReport(report, fileName, cm.getSource());
+        tryToSendReport(report, fileName, cm);
     }
 
     private void storeReport(String report, String pathName, String fileName) throws IOException {
@@ -60,13 +67,13 @@ public class MlrReportSender {
         logger.info("MLR successfully stored as " + pathName + fileName);
     }
 
-    // ugly retry logic again...
-    private void tryToSendReport(String report, String fileName, Source source) throws IOException {
+    // ugly retry logic ...
+    private void tryToSendReport(String report, String fileName, ContainerMessage cm) throws IOException {
         int i = 0;
         IOException t;
         do {
             try {
-                sendReport(report, fileName, source);
+                sendReport(report, fileName, cm);
                 return;
             } catch (IOException e) {
                 t = e;
@@ -79,23 +86,31 @@ public class MlrReportSender {
         throw t;
     }
 
-    private void sendReport(String report, String fileName, Source source) throws IOException {
-        if (Source.XIB.equals(source) && !fakeConfig.contains("xib")) {
+    private void sendReport(String report, String fileName, ContainerMessage cm) throws IOException {
+        if (Source.XIB.equals(cm.getSource()) && !fakeConfig.contains("xib")) {
             xibSender.send(report, fileName);
         }
-        if (Source.A2A.equals(source) && !fakeConfig.contains("a2a")) {
+        if (Source.A2A.equals(cm.getSource()) && !fakeConfig.contains("a2a")) {
             a2ASender.send(report, fileName);
+        }
+        if (Source.NETWORK.equals(cm.getSource()) && !fakeConfig.contains("network")) {
+            AccessPoint accessPoint = apManager.fetchAccessPoint(cm);
+            emailSender.send(prettyPrint(report), fileName, accessPoint);
         }
     }
 
-    private String prettyPrint(String report) throws TransformerException {
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+    private String prettyPrint(String report) {
+        try {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
-        StreamSource source = new StreamSource(new StringReader(report));
-        StreamResult result = new StreamResult(new StringWriter());
-        transformer.transform(source, result);
-        return result.getWriter().toString();
+            StreamSource source = new StreamSource(new StringReader(report));
+            StreamResult result = new StreamResult(new StringWriter());
+            transformer.transform(source, result);
+            return result.getWriter().toString();
+        } catch (Exception e) {
+            return report;
+        }
     }
 }

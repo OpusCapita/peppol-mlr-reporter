@@ -1,20 +1,16 @@
 package com.opuscapita.peppol.mlrreporter.creator;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
+import com.opuscapita.peppol.commons.container.metadata.ContainerBusinessMetadata;
 import com.opuscapita.peppol.commons.container.metadata.ContainerMessageMetadata;
 import com.opuscapita.peppol.commons.container.state.log.DocumentLog;
-import com.opuscapita.peppol.commons.storage.Storage;
 import com.opuscapita.peppol.mlrreporter.util.MlrUtils;
-import no.difi.oxalis.api.lang.OxalisContentException;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,15 +19,6 @@ import java.util.stream.Collectors;
 public class MlrReportCreator {
 
     private static final Logger logger = LoggerFactory.getLogger(MlrReportCreator.class);
-
-    private Storage storage;
-    private AdditionalMetadataExtractor metadataExtractor;
-
-    @Autowired
-    public MlrReportCreator(Storage storage, AdditionalMetadataExtractor metadataExtractor) {
-        this.storage = storage;
-        this.metadataExtractor = metadataExtractor;
-    }
 
     public String create(ContainerMessage cm, MlrType type) throws Exception {
         String report = MlrReportTemplates.RESPONSE_TEMPLATE;
@@ -69,31 +56,31 @@ public class MlrReportCreator {
 
     private String fillCommonFields(String template, ContainerMessage cm) throws Exception {
         ContainerMessageMetadata metadata = cm.getMetadata();
-        MlrAdditionalMetadata additionalMetadata = getAdditionalMetadata(cm);
+        ContainerBusinessMetadata businessMetadata = metadata.getBusinessMetadata();
 
 
         template = replace(template, "note", MlrUtils.getOriginalFilename(cm.getFileName()));
-        template = replace(template, "id", additionalMetadata.getDocumentId() + "-MLR");
+        template = replace(template, "id", businessMetadata.getDocumentId() + "-MLR");
 
         try {
-            template = replace(template, "issue_date", MlrUtils.convertDateToXml(additionalMetadata.getIssueDate()));
-            if (StringUtils.isNotBlank(additionalMetadata.getIssueTime())) {
+            template = replace(template, "issue_date", MlrUtils.convertDateToXml(businessMetadata.getIssueDate()));
+            if (StringUtils.isNotBlank(businessMetadata.getIssueTime())) {
                 String issue_time = MlrReportTemplates.ISSUE_TIME_TEMPLATE;
                 try {
-                    issue_time = replace(issue_time, "issue_time", MlrUtils.convertTimeToXml(additionalMetadata.getIssueTime()));
+                    issue_time = replace(issue_time, "issue_time", MlrUtils.convertTimeToXml(businessMetadata.getIssueTime()));
                 } catch (Exception e) {
-                    logger.debug("Failed to parse issue time: '" + additionalMetadata.getIssueTime() + "' for message: " + cm.getFileName());
+                    logger.debug("Failed to parse issue time: '" + businessMetadata.getIssueTime() + "' for message: " + cm.getFileName());
                     if (!cm.getHistory().hasError()) {
-                        cm.getHistory().addError("Unable to parse issue time: '" + additionalMetadata.getIssueTime() + "'");
+                        cm.getHistory().addError("Unable to parse issue time: '" + businessMetadata.getIssueTime() + "'");
                     }
                 }
                 template = StringUtils.replace(template, "#ISSUE_TIME#", issue_time);
             }
         } catch (Exception e) {
-            logger.info("Failed to parse issue issue date: '" + additionalMetadata.getIssueDate() + "', using current date instead");
+            logger.info("Failed to parse issue issue date: '" + businessMetadata.getIssueDate() + "', using current date instead");
             template = replace(template, "issue_date", MlrUtils.convertDateToXml(new Date()));
             if (!cm.getHistory().hasError()) {
-                cm.getHistory().addError("Unable to parse issue date: '" + additionalMetadata.getIssueDate() + "'");
+                cm.getHistory().addError("Unable to parse issue date: '" + businessMetadata.getIssueDate() + "'");
             }
         }
 
@@ -105,12 +92,12 @@ public class MlrReportCreator {
         template = replace(template, "response_date", MlrUtils.convertDateToXml(now));
         template = replace(template, "response_time", MlrUtils.convertTimeToXml(now));
         template = replace(template, "sender_id", metadata.getSenderId());
-        template = replace(template, "sender_name", additionalMetadata.getSenderName());
+        template = replace(template, "sender_name", businessMetadata.getSenderName());
         template = replace(template, "recipient_id", metadata.getRecipientId());
-        template = replace(template, "recipient_name", additionalMetadata.getReceiverName());
+        template = replace(template, "recipient_name", businessMetadata.getReceiverName());
         template = replace(template, "doc_reference", metadata.getMessageId());
 
-        template = StringUtils.replace(template, "#LINES#", createLines(cm, additionalMetadata.getDocumentId()));
+        template = StringUtils.replace(template, "#LINES#", createLines(cm, businessMetadata.getDocumentId()));
 
         return template;
     }
@@ -144,12 +131,6 @@ public class MlrReportCreator {
         }
 
         return result.toString();
-    }
-
-    private MlrAdditionalMetadata getAdditionalMetadata(ContainerMessage cm) throws IOException, OxalisContentException {
-        try (InputStream content = storage.get(cm.getFileName())) {
-            return metadataExtractor.extract(content);
-        }
     }
 
     private String replace(String original, String key, String value) {

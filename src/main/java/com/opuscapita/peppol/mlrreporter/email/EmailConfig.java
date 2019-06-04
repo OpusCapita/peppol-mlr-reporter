@@ -41,7 +41,7 @@ public class EmailConfig {
 
     public String getText(String receiverName) {
         return "This is an automatically redirected electronic invoice rejection message.\n\n" +
-                "We have received an invalid PEPPOL document sent by " + receiverName + ". Please correct it and resend.\n\n" +
+                "We have received an invalid PEPPOL document sent by '" + receiverName + "'. Please correct it and resend.\n\n" +
                 "You can find detailed information in the attached Message Level Response report. " +
                 "If you have any questions concerning the rejection, please reply directly to this e-mail.\n\n";
     }

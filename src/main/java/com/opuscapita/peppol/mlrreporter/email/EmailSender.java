@@ -1,9 +1,10 @@
 package com.opuscapita.peppol.mlrreporter.email;
 
 import com.opuscapita.peppol.commons.auth.AuthorizationService;
-import com.opuscapita.peppol.commons.container.metadata.AccessPointInfo;
+import com.opuscapita.peppol.mlrreporter.email.dto.AccessPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,20 +25,25 @@ public class EmailSender {
     private final RestTemplate restTemplate;
     private final AuthorizationService authService;
 
+    @Autowired
     public EmailSender(EmailConfig emailConfig, AuthorizationService authService, RestTemplateBuilder restTemplateBuilder) {
         this.emailConfig = emailConfig;
         this.authService = authService;
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    public void send(String report, String fileName, AccessPointInfo apInfo) throws IOException {
+    public void send(String report, String fileName, AccessPoint accessPoint) throws IOException {
+        if (accessPoint == null) {
+            return;
+        }
+
         String endpoint = getEndpoint();
         logger.debug("Sending email request to endpoint: " + endpoint + " for file: " + fileName);
 
         HttpHeaders headers = new HttpHeaders();
         authService.setAuthorizationHeader(headers);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        EmailObject email = createEmailObject(apInfo);
+        EmailObject email = createEmailObject(accessPoint);
         email.addAttachment(report, fileName);
         HttpEntity<EmailObject> entity = new HttpEntity<>(email, headers);
         logger.debug("Wrapped and set the request body as email object");
@@ -50,21 +56,15 @@ public class EmailSender {
         }
     }
 
-    private EmailObject createEmailObject(AccessPointInfo receiver) {
-        String emailAddress = getEmailAddress(receiver);
-        EmailObject email = new EmailObject(emailAddress);
+    private EmailObject createEmailObject(AccessPoint accessPoint) {
+        EmailObject email = new EmailObject(accessPoint.getEmailList());
         email.setFrom(emailConfig.getFrom());
         email.setReplyTo(emailConfig.getReplyTo());
         email.setSubject(emailConfig.getSubject());
         email.setCustomId(emailConfig.getCustomId());
-        email.setText(emailConfig.getText(receiver.getName()));
-        email.setHtml(emailConfig.getHtml(receiver.getName()));
+        email.setText(emailConfig.getText(accessPoint.getName()));
+        email.setHtml(emailConfig.getHtml(accessPoint.getName()));
         return email;
-    }
-
-    private String getEmailAddress(AccessPointInfo apInfo) {
-//        return apInfo.getEmailAddress();
-        return "";
     }
 
     private String getEndpoint() {
