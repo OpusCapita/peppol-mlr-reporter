@@ -39,7 +39,7 @@ public class MlrTypeIdentifier {
         }
 
         logger.debug("Checking for successfully delivery of the message: " + cm.getFileName());
-        if (ProcessStep.NETWORK.equals(cm.getStep())) {
+        if (ProcessStep.NETWORK.equals(cm.getStep()) && cm.isOutbound()) {
             logger.info("Creating 'AP' MLR for the message: " + cm.toKibana() + " reason: Successful Delivery");
             return MlrType.AP;
         }
