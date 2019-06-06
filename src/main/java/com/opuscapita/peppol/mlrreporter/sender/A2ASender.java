@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,6 +24,7 @@ public class A2ASender {
         this.restTemplate = restTemplate;
     }
 
+    @Async
     void send(String report, String fileName) throws IOException {
         logger.debug("Sending A2A mlr request for file: " + fileName);
 
