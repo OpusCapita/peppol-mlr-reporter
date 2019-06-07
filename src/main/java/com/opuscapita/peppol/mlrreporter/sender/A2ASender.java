@@ -26,7 +26,7 @@ public class A2ASender {
 
     @Async
     void send(String report, String fileName) throws IOException {
-        logger.debug("Sending A2A mlr request for file: " + fileName);
+        logger.info("A2ASender.send called for file: " + fileName);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Transfer-Encoding", "chunked");

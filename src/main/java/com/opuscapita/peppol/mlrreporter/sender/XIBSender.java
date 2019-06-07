@@ -31,6 +31,7 @@ public class XIBSender {
     }
 
     void send(String report, String fileName) throws IOException {
+        logger.info("XIBSender.send called for file: " + fileName);
         String endpoint = getEndpoint();
         logger.debug("Sending upload-mlr request to endpoint: " + endpoint + " for file: " + fileName);
 
