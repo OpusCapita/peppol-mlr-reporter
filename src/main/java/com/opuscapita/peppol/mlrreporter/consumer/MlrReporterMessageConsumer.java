@@ -80,9 +80,8 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
     private void sendToRetry(ContainerMessage cm) {
         new Thread(() -> {
             try {
-                Thread.sleep(100);
                 messageQueue.convertAndSend(queueIn, cm);
-            } catch (IOException | TimeoutException | InterruptedException e) {
+            } catch (IOException | TimeoutException e) {
                 e.printStackTrace();
             }
         }).start();
