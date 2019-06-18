@@ -2,6 +2,7 @@ package com.opuscapita.peppol.mlrreporter.consumer;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.eventing.TicketReporter;
+import com.opuscapita.peppol.commons.queue.MessageQueue;
 import com.opuscapita.peppol.commons.queue.consume.ContainerMessageConsumer;
 import com.opuscapita.peppol.mlrreporter.creator.MlrReportCreator;
 import com.opuscapita.peppol.mlrreporter.creator.MlrType;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,14 +21,19 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
 
     private static final Logger logger = LoggerFactory.getLogger(MlrReporterMessageConsumer.class);
 
+    @Value("${peppol.mlr-reporter.queue.in.name}")
+    private String queueIn;
+
+    private MessageQueue messageQueue;
     private MlrReportSender mlrSender;
     private MlrReportCreator mlrCreator;
     private TicketReporter ticketReporter;
     private MlrTypeIdentifier typeIdentifier;
 
     @Autowired
-    public MlrReporterMessageConsumer(MlrReportCreator mlrCreator, MlrReportSender mlrSender,
+    public MlrReporterMessageConsumer(MessageQueue messageQueue, MlrReportCreator mlrCreator, MlrReportSender mlrSender,
                                       TicketReporter ticketReporter, MlrTypeIdentifier typeIdentifier) {
+        this.messageQueue = messageQueue;
         this.mlrSender = mlrSender;
         this.mlrCreator = mlrCreator;
         this.ticketReporter = ticketReporter;
@@ -55,5 +62,4 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
             logger.error(message, e);
         }
     }
-
 }
