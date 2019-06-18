@@ -30,6 +30,14 @@ public class A2ASender {
     public void send(String report, String fileName) {
         logger.info("A2ASender.send called for file: " + fileName + " in thread: " + Thread.currentThread().getName());
 
+        try {
+            sendRequest(report, fileName);
+        } catch (Exception e) {
+            handleError(fileName, e);
+        }
+    }
+
+    private void sendRequest(String report, String fileName) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Transfer-Encoding", "chunked");
         headers.set("Document-Path", String.format("/mlr/%s", fileName));
@@ -38,26 +46,17 @@ public class A2ASender {
         HttpEntity<Resource> entity = new HttpEntity<>(new ByteArrayResource(report.getBytes()), headers);
         logger.debug("Wrapped and set the request body as file");
 
-        // this method shouldn't throw exception because of @Async annotation
-        // that is why I added this ugly retry-once-more logic for connection exceptions
         try {
-            sendRequest(fileName, entity);
-        } catch (Exception e) {
-            if (e instanceof ResourceAccessException) {
-                try {
-                    sendRequest(fileName, entity);
-                } catch (Exception e2) {
-                    handleError(fileName, e2);
-                }
-            } else {
-                handleError(fileName, e);
+            ResponseEntity<String> result = restTemplate.exchange(config.host, HttpMethod.POST, entity, String.class);
+            logger.info("MLR successfully sent to A2A, filename: " + fileName + ", got response: " + result.toString());
+        } catch (ResourceAccessException e) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
             }
+            // retry connection issues..
+            sendRequest(report, fileName);
         }
-    }
-
-    private void sendRequest(String fileName, HttpEntity<Resource> entity) {
-        ResponseEntity<String> result = restTemplate.exchange(config.host, HttpMethod.POST, entity, String.class);
-        logger.info("MLR successfully sent to A2A, filename: " + fileName + ", got response: " + result.toString());
     }
 
     private void handleError(String fileName, Exception e) {
