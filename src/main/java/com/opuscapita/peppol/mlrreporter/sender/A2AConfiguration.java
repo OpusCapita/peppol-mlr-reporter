@@ -63,11 +63,12 @@ public class A2AConfiguration {
     @Qualifier("a2aAsyncExecutor")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(5);
-        executor.setQueueCapacity(5);
+        executor.setCorePoolSize(100);
+        executor.setMaxPoolSize(100);
+        executor.setQueueCapacity(100);
         executor.setThreadNamePrefix("PeppolMlrReporter-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.initialize();
         return executor;
     }
