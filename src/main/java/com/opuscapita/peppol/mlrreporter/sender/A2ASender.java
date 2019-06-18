@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,9 +24,8 @@ public class A2ASender {
         this.ticketReporter = ticketReporter;
     }
 
-    @Async("a2aAsyncExecutor")
     void send(String report, String fileName) {
-        logger.info("A2ASender.send called for file: " + fileName + " in thread: " + Thread.currentThread().getName());
+        logger.info("A2ASender.send called for file: " + fileName);
 
         try {
             HttpHeaders headers = new HttpHeaders();
