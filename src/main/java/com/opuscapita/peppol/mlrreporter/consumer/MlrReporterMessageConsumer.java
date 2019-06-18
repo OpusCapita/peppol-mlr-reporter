@@ -14,12 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.task.TaskRejectedException;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeoutException;
 
 @Component
 public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
@@ -59,16 +54,7 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
             }
 
             String report = mlrCreator.create(cm, type);
-
-            try {
-                mlrSender.send(cm, report, type);
-            } catch (Exception e) {
-                if (e instanceof TaskRejectedException || e instanceof RejectedExecutionException) {
-                    sendToRetry(cm);
-                } else {
-                    throw e;
-                }
-            }
+            mlrSender.send(cm, report, type);
 
         } catch (Exception e) {
             String message = "Error occurred while creating MLR report for file: " + cm.getFileName();
@@ -76,15 +62,4 @@ public class MlrReporterMessageConsumer implements ContainerMessageConsumer {
             logger.error(message, e);
         }
     }
-
-    private void sendToRetry(ContainerMessage cm) {
-        new Thread(() -> {
-            try {
-                messageQueue.convertAndSend(queueIn, cm);
-            } catch (IOException | TimeoutException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
 }
