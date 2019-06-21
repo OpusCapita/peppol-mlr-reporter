@@ -78,7 +78,7 @@ public class MlrReportSender {
             } catch (IOException e) {
                 t = e;
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException ignored) {
                 }
             }
