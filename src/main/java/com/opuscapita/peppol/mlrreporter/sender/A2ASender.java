@@ -2,7 +2,8 @@ package com.opuscapita.peppol.mlrreporter.sender;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -19,7 +20,8 @@ public class A2ASender {
     private final A2AConfiguration config;
     private final RestTemplate restTemplate;
 
-    public A2ASender(RestTemplate restTemplate, A2AConfiguration config) {
+    @Autowired
+    public A2ASender(@Qualifier("a2aRestTemplate") RestTemplate restTemplate, A2AConfiguration config) {
         this.config = config;
         this.restTemplate = restTemplate;
     }
