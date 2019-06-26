@@ -38,16 +38,16 @@ public class A2AConfiguration {
 
     private RequestConfig getRequestConfig() {
         return RequestConfig.custom()
-                .setConnectionRequestTimeout(5000)
-                .setConnectTimeout(5000)
-                .setSocketTimeout(5000)
+                .setConnectionRequestTimeout(10000)
+                .setConnectTimeout(10000)
+                .setSocketTimeout(150000)
                 .build();
     }
 
     private PoolingHttpClientConnectionManager getConnectionManager() {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
-        manager.setMaxTotal(50);
-        manager.setDefaultMaxPerRoute(40);
+        manager.setMaxTotal(100);
+        manager.setDefaultMaxPerRoute(100);
         return manager;
     }
 
