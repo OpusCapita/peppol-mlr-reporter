@@ -2,6 +2,7 @@ package com.opuscapita.peppol.mlrreporter.sender;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.container.state.Source;
+import com.opuscapita.peppol.commons.queue.RetryOperation;
 import com.opuscapita.peppol.commons.storage.Storage;
 import com.opuscapita.peppol.mlrreporter.creator.MlrType;
 import com.opuscapita.peppol.mlrreporter.email.AccessPointManager;
@@ -51,14 +52,14 @@ public class MlrReportSender {
         this.apManager = apManager;
     }
 
-    public void send(ContainerMessage cm, String report, MlrType type) throws IOException {
+    public void send(ContainerMessage cm, String report, MlrType type) throws Exception {
         String pathName = FilenameUtils.getFullPath(cm.getFileName());
         String baseName = FilenameUtils.getBaseName(cm.getFileName());
         String fileName = baseName + "-" + type.name().toLowerCase() + "-mlr.xml";
 
         storeReport(report, pathName, fileName);
 
-        tryToSendReport(report, fileName, cm);
+        RetryOperation.start(() -> sendReport(report, fileName, cm), 30, 1200000);
     }
 
     private void storeReport(String report, String pathName, String fileName) throws IOException {
@@ -67,26 +68,7 @@ public class MlrReportSender {
         logger.info("MLR successfully stored as " + pathName + fileName);
     }
 
-    // ugly retry logic ...
-    private void tryToSendReport(String report, String fileName, ContainerMessage cm) throws IOException {
-        int i = 0;
-        IOException t;
-        do {
-            try {
-                sendReport(report, fileName, cm);
-                return;
-            } catch (IOException e) {
-                t = e;
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ignored) {
-                }
-            }
-        } while (++i < 5);
-        throw t;
-    }
-
-    private void sendReport(String report, String fileName, ContainerMessage cm) throws IOException {
+    private void sendReport(String report, String fileName, ContainerMessage cm) throws Exception {
         logger.info("MlrReportSender.sendReport called for message: " + cm.getFileName() + ", source[" + cm.getSource() + "]");
         if (Source.XIB.equals(cm.getSource()) && !fakeConfig.contains("xib")) {
             xibSender.send(report, fileName);
@@ -114,4 +96,5 @@ public class MlrReportSender {
             return report;
         }
     }
+
 }
