@@ -1,5 +1,6 @@
 package com.opuscapita.peppol.mlrreporter.sender;
 
+import com.opuscapita.peppol.commons.queue.RetryOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,11 @@ public class A2ASender {
         this.restTemplate = restTemplate;
     }
 
-    void send(String report, String fileName) throws IOException {
+    void send(String report, String fileName) throws Exception {
+        RetryOperation.start(() -> sendRequest(report, fileName));
+    }
+
+    private void sendRequest(String report, String fileName) throws IOException {
         logger.debug("Sending A2A mlr request for file: " + fileName);
 
         HttpHeaders headers = new HttpHeaders();
