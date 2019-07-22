@@ -69,7 +69,7 @@ public class MlrReportSender {
     }
 
     private void sendReport(String report, String fileName, ContainerMessage cm) throws Exception {
-        logger.info("MlrReportSender.sendReport called for message: " + cm.getFileName() + ", source[" + cm.getSource() + "]");
+        logger.debug("MlrReportSender.sendReport called for message: " + cm.getFileName() + ", source[" + cm.getSource() + "]");
         if (Source.XIB.equals(cm.getSource()) && !fakeConfig.contains("xib")) {
             xibSender.send(report, fileName);
         }
