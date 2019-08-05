@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -49,8 +46,13 @@ public class EmailSender {
         logger.debug("Wrapped and set the request body as email object");
 
         try {
-            restTemplate.exchange(endpoint, HttpMethod.POST, entity, String.class);
-            logger.info("MLR successfully sent as email to: " + email.getTo() + ", filename: " + fileName);
+            ResponseEntity<String> result = restTemplate.exchange(endpoint, HttpMethod.POST, entity, String.class);
+            if (result.getStatusCode().is2xxSuccessful()) {
+                logger.info("MLR successfully sent as email to: " + email.getTo() + ", filename: " + fileName);
+            } else {
+                throw new RuntimeException(result.getBody());
+            }
+
         } catch (Exception e) {
             throw new IOException("Error occurred while trying to send the MLR to " + email.getTo(), e);
         }
