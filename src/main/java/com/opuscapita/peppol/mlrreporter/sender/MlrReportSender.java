@@ -2,7 +2,6 @@ package com.opuscapita.peppol.mlrreporter.sender;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.container.state.Source;
-import com.opuscapita.peppol.commons.queue.RetryOperation;
 import com.opuscapita.peppol.commons.storage.Storage;
 import com.opuscapita.peppol.mlrreporter.creator.MlrType;
 import com.opuscapita.peppol.mlrreporter.email.AccessPointManager;
@@ -58,8 +57,7 @@ public class MlrReportSender {
         String fileName = baseName + "-" + type.name().toLowerCase() + "-mlr.xml";
 
         storeReport(report, pathName, fileName);
-
-        RetryOperation.start(() -> sendReport(report, fileName, cm), 30, 1200000);
+        sendReport(report, fileName, cm);
     }
 
     private void storeReport(String report, String pathName, String fileName) throws IOException {
@@ -69,7 +67,7 @@ public class MlrReportSender {
     }
 
     private void sendReport(String report, String fileName, ContainerMessage cm) throws Exception {
-        logger.info("MlrReportSender.sendReport called for message: " + cm.getFileName() + ", source[" + cm.getSource() + "]");
+        logger.debug("MlrReportSender.sendReport called for message: " + cm.getFileName() + ", source[" + cm.getSource() + "]");
         if (Source.XIB.equals(cm.getSource()) && !fakeConfig.contains("xib")) {
             xibSender.send(report, fileName);
         }
@@ -96,5 +94,4 @@ public class MlrReportSender {
             return report;
         }
     }
-
 }
