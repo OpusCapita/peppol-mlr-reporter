@@ -25,7 +25,8 @@ public class MlrReportTemplates {
                     "<cbc:ResponseCode>${response_code}</cbc:ResponseCode>" +
                     "#DESCRIPTION#" +
                     "</cac:Response>" +
-                    "<cac:DocumentReference><cbc:ID>${doc_reference}</cbc:ID></cac:DocumentReference>" +
+                    "<cac:DocumentReference><cbc:ID>${doc_reference}</cbc:ID>" +
+                    "<cbc:DocumentType>${doc_type}</cbc:DocumentType></cac:DocumentReference>" +
                     "#LINES#" +
                     "</cac:DocumentResponse>" +
                     "</ApplicationResponse>";

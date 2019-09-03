@@ -3,6 +3,7 @@ package com.opuscapita.peppol.mlrreporter.creator;
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.container.metadata.ContainerBusinessMetadata;
 import com.opuscapita.peppol.commons.container.metadata.ContainerMessageMetadata;
+import com.opuscapita.peppol.commons.container.metadata.ContainerValidationRule;
 import com.opuscapita.peppol.commons.container.state.log.DocumentLog;
 import com.opuscapita.peppol.mlrreporter.util.MlrUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -56,6 +57,7 @@ public class MlrReportCreator {
 
     private String fillCommonFields(String template, ContainerMessage cm) throws Exception {
         ContainerMessageMetadata metadata = cm.getMetadata();
+        ContainerValidationRule ruleMetadata = cm.getMetadata().getValidationRule();
         ContainerBusinessMetadata businessMetadata = metadata.getBusinessMetadata();
 
 
@@ -96,6 +98,7 @@ public class MlrReportCreator {
         template = replace(template, "recipient_id", metadata.getRecipientId());
         template = replace(template, "recipient_name", businessMetadata.getReceiverName());
         template = replace(template, "doc_reference", metadata.getMessageId());
+        template = replace(template, "doc_type", ruleMetadata != null ? ruleMetadata.getLocalName() : "");
 
         template = StringUtils.replace(template, "#LINES#", createLines(cm, businessMetadata.getDocumentId()));
 
