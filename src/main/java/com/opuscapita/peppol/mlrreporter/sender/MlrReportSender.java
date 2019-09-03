@@ -39,16 +39,18 @@ public class MlrReportSender {
     private final A2ASender a2ASender;
     private final XIBSender xibSender;
     private final EmailSender emailSender;
+    private final SiriusSender siriusSender;
     private final AccessPointManager apManager;
 
     @Autowired
     public MlrReportSender(Storage storage, A2ASender a2ASender, XIBSender xibSender,
-                           EmailSender emailSender, AccessPointManager apManager) {
+                           SiriusSender siriusSender, EmailSender emailSender, AccessPointManager apManager) {
         this.storage = storage;
         this.a2ASender = a2ASender;
         this.xibSender = xibSender;
         this.emailSender = emailSender;
         this.apManager = apManager;
+        this.siriusSender = siriusSender;
     }
 
     public void send(ContainerMessage cm, String report, MlrType type) throws Exception {
@@ -73,6 +75,9 @@ public class MlrReportSender {
         }
         if (Source.A2A.equals(cm.getSource()) && !fakeConfig.contains("a2a")) {
             a2ASender.send(report, fileName);
+        }
+        if (Source.SIRIUS.equals(cm.getSource()) && !fakeConfig.contains("sirius")) {
+            siriusSender.send(report, fileName);
         }
         if (Source.NETWORK.equals(cm.getSource()) && !fakeConfig.contains("network")) {
             AccessPoint accessPoint = apManager.fetchAccessPoint(cm);
