@@ -49,7 +49,8 @@ public class MlrTypeIdentifier {
     private boolean hasLookupError(ContainerMessage cm) {
         return cm.getHistory().getLogs().stream().filter(DocumentLog::isSendingError).anyMatch(log -> {
             String code = log.getMessage().split(":")[0];
-            return "UNKNOWN_RECIPIENT".equals(code) || "UNSUPPORTED_DATA_FORMAT".equals(code);
+//            return "UNKNOWN_RECIPIENT".equals(code) || "UNSUPPORTED_DATA_FORMAT".equals(code);
+            return "UNSUPPORTED_DATA_FORMAT".equals(code);
         });
     }
 }
