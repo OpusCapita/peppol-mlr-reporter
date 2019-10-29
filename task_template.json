@@ -2,7 +2,7 @@
   "default": {
     "name": "${serviceName}",
     "log-driver": "gelf",
-    "log-opt": ["gelf-address=udp://${logstash_ip}:12201", "tag=\"${serviceName}\""],
+    "log-opt": ["gelf-address=udp://localhost:12201", "tag=\"${serviceName}\""],
     "constraint": ["engine.labels.nodetype==worker"],
     "publish": ["mode=host,target=3042,published=3042,protocol=tcp"],
     "host": ["consul:172.17.0.1"],
@@ -10,14 +10,14 @@
       "SERVICE_NAME=${serviceName}",
       "SERVICE_3042_CHECK_HTTP=/api/health/check",
       "SERVICE_3042_CHECK_INTERVAL=15s",
-      "SERVICE_3042_CHECK_TIMEOUT=3s",
-      "RABBITMQ_USER=${SECRET_:env_RABBITMQUSER}",
-      "RABBITMQ_PASS=${SECRET_:env_RABBITMQPASS}"
+      "SERVICE_3042_CHECK_TIMEOUT=3s"
     ],
     "oc-consul-injection": {
       "redis/password": "${SECRET_:env_REDIS}",
-      "mq/user": "${SECRET_:env_RABBITMQUSER}",
-      "mq/password": "${SECRET_:env_RABBITMQPASS}",
+      "spring/rabbitmq/host": "rabbitmq",
+      "spring/rabbitmq/port": "5672",
+      "spring/rabbitmq/username": "${SECRET_:env_RABBITMQUSER}",
+      "spring/rabbitmq/password": "${SECRET_:env_RABBITMQPASS}",
       "a2a/host": "${PEPPOL_:env_A2AURL}",
       "a2a/username": "${PEPPOL_:env_A2AUSER}",
       "a2a/password": "${PEPPOL_:env_A2APASS}",
@@ -33,15 +33,12 @@
       "email/replyTo": "customerservice.en@opuscapita.com",
       "email/subject": "Peppol Gateway: Invalid document report"
     },
-    "limit-cpu": "0.2",
     "limit-memory": "900M",
-    "reserve-cpu": "0.1",
     "reserve-memory": "500M",
     "oc-service-user-create-override": "true"
   },
   "prod": {
     "replicas": 3,
-    "limit-cpu": "0.4",
     "limit-memory": "2000M"
   }
 }

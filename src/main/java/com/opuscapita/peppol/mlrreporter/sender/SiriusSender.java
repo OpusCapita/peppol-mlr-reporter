@@ -1,6 +1,5 @@
 package com.opuscapita.peppol.mlrreporter.sender;
 
-import com.opuscapita.peppol.commons.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
