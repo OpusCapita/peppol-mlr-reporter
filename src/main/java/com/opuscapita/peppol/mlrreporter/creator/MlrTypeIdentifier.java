@@ -2,7 +2,7 @@ package com.opuscapita.peppol.mlrreporter.creator;
 
 import com.opuscapita.peppol.commons.container.ContainerMessage;
 import com.opuscapita.peppol.commons.container.state.ProcessStep;
-import com.opuscapita.peppol.commons.container.state.log.DocumentLog;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -47,10 +47,12 @@ public class MlrTypeIdentifier {
     }
 
     private boolean hasLookupError(ContainerMessage cm) {
-        return cm.getHistory().getLogs().stream().filter(DocumentLog::isSendingError).anyMatch(log -> {
-            String code = log.getMessage().split(":")[0];
-//            return "UNKNOWN_RECIPIENT".equals(code) || "UNSUPPORTED_DATA_FORMAT".equals(code);
-            return "UNSUPPORTED_DATA_FORMAT".equals(code);
+        return cm.getHistory().getLogs().stream().anyMatch(log -> {
+            String message = log.getMessage();
+            if (StringUtils.isNotBlank(message)) {
+                return message.startsWith("UNSUPPORTED_DATA_FORMAT") || message.startsWith("UR_MANUAL_TRIGGER");
+            }
+            return false;
         });
     }
 }
