@@ -51,6 +51,7 @@ public class SiriusSender implements RetryableSender  {
         headers.set("Transfer-Encoding", "chunked");
         headers.set("File-Type", "MLR");
         headers.set("File-Name", fileName);
+        headers.set("Sender-Application", "PEPPOL-AP");
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes()));
         HttpEntity<Resource> entity = new HttpEntity<>(new ByteArrayResource(report.getBytes()), headers);
