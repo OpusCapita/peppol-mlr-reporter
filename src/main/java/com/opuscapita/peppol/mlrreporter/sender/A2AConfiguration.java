@@ -28,19 +28,22 @@ public class A2AConfiguration {
     private final static Logger logger = LoggerFactory.getLogger(A2AConfiguration.class);
 
     @Value("${a2a.host:''}")
-    String host;
+    private String host;
 
     @Value("${a2a.username:''}")
-    String username;
+    private String username;
 
     @Value("${a2a.password:''}")
-    String password;
+    private String password;
+
+    @Value("${a2a.timeout:3}")
+    private int timeout;
 
     private RequestConfig getRequestConfig() {
         return RequestConfig.custom()
-                .setConnectionRequestTimeout(10000)
-                .setConnectTimeout(10000)
-                .setSocketTimeout(150000)
+                .setConnectionRequestTimeout(timeout * 60 * 1000)
+                .setConnectTimeout(timeout * 60 * 1000)
+                .setSocketTimeout(timeout * 60 * 1000)
                 .build();
     }
 
@@ -82,23 +85,12 @@ public class A2AConfiguration {
         }
     }
 
-    String getAuthHeader() {
+    public String getHost() {
+        return host;
+    }
+
+    public String getAuthHeader() {
         byte[] basicAuthValue = (username + ":" + password).getBytes();
         return "Basic " + Base64.getEncoder().encodeToString(basicAuthValue);
     }
-
-//    @Bean
-//    @Qualifier("a2aAsyncExecutor")
-//    public Executor taskExecutor() {
-//        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-//        executor.setCorePoolSize(100);
-//        executor.setMaxPoolSize(100);
-//        executor.setQueueCapacity(100);
-//        executor.setThreadNamePrefix("PeppolMlrReporter-");
-//        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-//        executor.setWaitForTasksToCompleteOnShutdown(true);
-//        executor.initialize();
-//        return executor;
-//    }
-
 }

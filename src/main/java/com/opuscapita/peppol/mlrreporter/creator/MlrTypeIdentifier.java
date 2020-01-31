@@ -50,7 +50,7 @@ public class MlrTypeIdentifier {
         return cm.getHistory().getLogs().stream().anyMatch(log -> {
             String message = log.getMessage();
             if (StringUtils.isNotBlank(message)) {
-                return message.startsWith("UNSUPPORTED_DATA_FORMAT") || message.startsWith("UR_MANUAL_TRIGGER");
+                return message.startsWith("UNSUPPORTED_DATA_FORMAT") || message.startsWith("UNKNOWN_RECIPIENT");
             }
             return false;
         });
