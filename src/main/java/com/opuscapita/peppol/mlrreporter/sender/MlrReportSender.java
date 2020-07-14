@@ -70,16 +70,16 @@ public class MlrReportSender {
 
     private void sendReport(String report, String fileName, ContainerMessage cm) throws Exception {
         logger.debug("MlrReportSender.sendReport called for message: " + cm.getFileName() + ", source[" + cm.getSource() + "]");
-        if (Source.XIB.equals(cm.getSource()) && !fakeConfig.contains("xib")) {
+        if (Source.XIB.equals(cm.getSource()) && !fakeConfig.contains(Source.XIB.name())) {
             xibSender.send(report, fileName);
         }
-        if (Source.A2A.equals(cm.getSource()) && !fakeConfig.contains("a2a")) {
+        if (Source.A2A.equals(cm.getSource()) && !fakeConfig.contains(Source.A2A.name())) {
             a2ASender.send(report, fileName);
         }
-        if (Source.SIRIUS.equals(cm.getSource()) && !fakeConfig.contains("sirius")) {
+        if (Source.SIRIUS.equals(cm.getSource()) && !fakeConfig.contains(Source.SIRIUS.name())) {
             siriusSender.send(report, fileName);
         }
-        if (Source.NETWORK.equals(cm.getSource()) && !fakeConfig.contains("network")) {
+        if (Source.NETWORK.equals(cm.getSource()) && !fakeConfig.contains(Source.NETWORK.name())) {
             AccessPoint accessPoint = apManager.fetchAccessPoint(cm);
             emailSender.send(prettyPrint(report), fileName, accessPoint);
         }
