@@ -55,6 +55,7 @@ public class SiriusSender implements RetryableSender  {
             ResponseEntity<String> result = restTemplate.exchange(config.getUrl(), HttpMethod.POST, entity, String.class);
             logger.info("MLR successfully sent to Sirius, filename: " + fileName + ", got response: " + result.toString());
         } catch (Exception e) {
+            logger.debug("Exception: " + e.toString() );
             throw new IOException("Error occurred while trying to send the MLR to Sirius", e);
         }
     }
