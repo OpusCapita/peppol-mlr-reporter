@@ -70,6 +70,8 @@ public class MlrReportSender {
 
     private void sendReport(String report, String fileName, ContainerMessage cm) throws Exception {
         logger.debug("MlrReportSender.sendReport called for message: " + cm.getFileName() + ", source[" + cm.getSource() + "]");
+        
+        logger.info("sendReport #1");
         if (Source.XIB.equals(cm.getSource()) && !fakeConfig.contains(Source.XIB.name())) {
             xibSender.send(report, fileName);
         }
@@ -77,7 +79,9 @@ public class MlrReportSender {
             a2ASender.send(report, fileName);
         }
         if (Source.SIRIUS.equals(cm.getSource()) && !fakeConfig.contains(Source.SIRIUS.name())) {
+            logger.info("sendReport #2");
             siriusSender.send(report, fileName);
+            logger.info("sendReport #2.end");
         }
         if (Source.NETWORK.equals(cm.getSource()) && !fakeConfig.contains(Source.NETWORK.name())) {
             AccessPoint accessPoint = apManager.fetchAccessPoint(cm);
