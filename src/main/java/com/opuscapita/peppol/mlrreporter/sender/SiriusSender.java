@@ -42,7 +42,7 @@ public class SiriusSender implements RetryableSender  {
         logger.info("SiriusSender.send called for file: " + fileName);
 
         logger.info("SiriusSender.retrysend #1");
-        
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("Transfer-Encoding", "chunked");
         headers.set("File-Type", "MLR");
@@ -50,19 +50,13 @@ public class SiriusSender implements RetryableSender  {
         headers.set("senderApplication", "PEPPOL-AP");
         headers.set("Authorization", config.getAuthHeader());
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        
-        logger.info("SiriusSender.retrysend #2");
-        
+
         HttpEntity<Resource> entity = new HttpEntity<>(new ByteArrayResource(report.getBytes()), headers);
-        
-        logger.info("SiriusSender.retrysend #3");
-        
+
         logger.debug("Wrapped and set the request body as file");
 
-        logger.info("SiriusSender.retrysend #4");
-        
         try {
-            logger.info("Before MLR successfully sent to Sirius");
+            logger.info("Before MLR restcall to Sirius");
             ResponseEntity<String> result = restTemplate.exchange(config.getUrl(), HttpMethod.POST, entity, String.class);
             logger.info("MLR successfully sent to Sirius, filename: " + fileName + ", got response: " + result.toString());
         } catch (Exception e) {
