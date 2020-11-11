@@ -7,6 +7,7 @@ import com.opuscapita.peppol.mlrreporter.creator.MlrType;
 import com.opuscapita.peppol.mlrreporter.email.AccessPointManager;
 import com.opuscapita.peppol.mlrreporter.email.EmailSender;
 import com.opuscapita.peppol.mlrreporter.email.dto.AccessPoint;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
