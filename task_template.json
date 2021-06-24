@@ -45,7 +45,6 @@
       "email/subject": "Peppol Gateway: Invalid document report"
     },
     "limit-memory": "900M",
-    "reserve-memory": "500M",
     "oc-service-user-create-override": "true"
   },
   "prod": {
